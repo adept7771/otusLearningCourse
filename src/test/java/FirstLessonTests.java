@@ -21,7 +21,7 @@ public class FirstLessonTests {
     }
 
     @Test
-    public void firstTest(){
+    public void myFirstTest(){
         driver.get("https://otus.ru");
         logger.info("Открыта страница отус");
         Assert.assertTrue("Тайтл не содержит заданный текст.",
