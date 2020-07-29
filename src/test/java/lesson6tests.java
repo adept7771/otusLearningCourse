@@ -142,7 +142,7 @@ public class lesson6tests {
                 findElement("//div[contains(text(), 'Операционная система')]", 10L));
         clickWithWait("//button[contains(text(), 'Различающиеся характеристики')]");
         Assert.assertFalse("Операционная система все так же видна в различающихся характеристиках",
-                isElementVisible("//button[contains(text(), 'Все характеристики')]", 3L));
+                isElementVisible("//button[contains(text(), 'Операционная система')]", 3L));
     }
 
     // ================================================================
@@ -163,22 +163,6 @@ public class lesson6tests {
         webDriver.manage().window().setPosition(point);
         webDriver.manage().window().setSize(new Dimension(1280, 768));
         logger.info("Драйвер поднят");
-    }
-
-    public WebElement findElement(String xpath, long timeToWait) {
-        logger.info("Ждем элемент по xpath: " + xpath);
-        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(xpath)));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
-        for (int i = 0; i < 10; i++) {
-            try {
-                return webDriver.findElement(By.xpath(xpath));
-            } catch (StaleElementReferenceException e) {
-                wait(2000);
-                continue;
-            }
-        }
-        return null;
     }
 
     public void scrollToElement(long timeToWait, String xpath) {
@@ -211,33 +195,60 @@ public class lesson6tests {
         WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
         logger.info("Попытка поиска элемента и проведения клика по пути: " + xpath);
         wait.withMessage("WebElement can't be found by: " + xpath);
-        WebElement webElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
-        ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);", webElement);
-        wait.until(ExpectedConditions.visibilityOf(webElement));
-        for (int i = 0; i < 5; i++) {
+        ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);",
+                wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath))));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+        int maxWaitForAvoidStaleElementException = (int) timeToWait;
+        for (int i = 0; i < maxWaitForAvoidStaleElementException; i++) {
             try {
-                webElement.click();
+                wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath))).click();
                 return;
             } catch (StaleElementReferenceException e) {
                 wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
                 wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
-                wait(200);
-                webElement = webDriver.findElement(By.xpath(xpath));
+                waitStatic(1000);
             }
         }
     }
 
+    public WebElement findElement(String xpath, long timeToWait) {
+        getReadyState();
+        logger.info("Ждем элемент по xpath: " + xpath);
+        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(xpath)));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+        int maxWaitForAvoidStaleElementException = (int) timeToWait;
+        for (int i = 0; i < maxWaitForAvoidStaleElementException; i++) {
+            try {
+                return webDriver.findElement(By.xpath(xpath));
+            } catch (StaleElementReferenceException e) {
+                waitStatic(1000);
+                continue;
+            }
+        }
+        return null;
+    }
+
     public void clickWithWait(String xpath) {
-        clickWithWait(5L, xpath);
+        clickWithWait(10L, xpath);
     }
 
     public List<WebElement> findAllWebElements(long timeToWait, String xpath) {
         getReadyState();
         WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
         logger.info("Поиск всех элементов по пути: " + xpath);
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(xpath)));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
-        return webDriver.findElements(By.xpath(xpath));
+        int maxWaitForAvoidStaleElementException = (int) timeToWait;
+        for (int i = 0; i < maxWaitForAvoidStaleElementException; i++) {
+            try {
+                wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(xpath)));
+                wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(xpath)));
+                return webDriver.findElements(By.xpath(xpath));
+            } catch (StaleElementReferenceException e) {
+                waitStatic(1000);
+                continue;
+            }
+        }
+        return null;
     }
 
     public List<WebElement> findAllWebElements(String xpath) {
@@ -248,9 +259,13 @@ public class lesson6tests {
         getReadyState();
         WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
         try {
+            waitStatic((int) timeToWait);
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
             return true;
         } catch (ElementNotVisibleException e) {
+            return false;
+        }
+        catch (TimeoutException e){
             return false;
         }
     }
@@ -258,7 +273,7 @@ public class lesson6tests {
     public void closeAlertIfAppeared() {
         getReadyState();
         try {
-            clickWithWait(2L,
+            clickWithWait(1L,
                     "//button[contains(@class, 'lg-cc__button_type_action') and (text()='Принять')]");
         } catch (WebDriverException e) {
             logger.info("Окно принять условия не появилось.");
@@ -284,13 +299,20 @@ public class lesson6tests {
     public void getReadyState() {
         WebDriverWait wait = new WebDriverWait(webDriver, 30);
         wait.until(ExpectedConditions.jsReturnsValue("return document.readyState==\"complete\";"));
+        waitPreloaderInvisible();
+    }
+
+    public void waitPreloaderInvisible(){
+        new WebDriverWait(webDriver, 10)
+                .until(ExpectedConditions.invisibilityOfElementLocated
+                        (By.xpath("/html/body/div[3]/div[5]/div[2]/div/div[1]/div/div/div[2]/div/div")));
     }
 
     public String addIndexToXpath(String xpath, int i) {
         return "(" + xpath + ")[" + i + "]";
     }
 
-    public void wait(int timeInMs) {
+    public void waitStatic(int timeInMs) {
         try {
             Thread.sleep(timeInMs);
         } catch (InterruptedException e) {
