@@ -1,3 +1,4 @@
+import core.WebDriverFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.After;
@@ -16,7 +17,6 @@ public class lesson6tests {
 
     private WebDriver webDriver;
     private Logger logger = LogManager.getLogger(lesson6tests.class);
-
 
     @Test
     public void myFirstTest() {
