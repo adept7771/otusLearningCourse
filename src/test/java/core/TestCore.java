@@ -2,7 +2,7 @@ package core;
 
 import junit.framework.TestCase;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.*;
+import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -17,7 +17,7 @@ public class TestCore extends TestCase {
     private WebDriver webDriver;
 
     @Override
-    protected void setUp(){
+    protected void setUp() {
         String browserNameFromSystem = null;
         try {
             browserNameFromSystem = System.getProperty("browser");
@@ -40,7 +40,7 @@ public class TestCore extends TestCase {
     }
 
     @Override
-    protected void tearDown(){
+    protected void tearDown() {
         if (webDriver != null) {
             logger.info("Драйвер выключен");
             webDriver.quit();
@@ -54,7 +54,8 @@ public class TestCore extends TestCase {
 
     // ================================================================
 
-    public void get(String url){
+    public void get(String url) {
+        logger.info("Открываю сайт: " + url);
         webDriver.get(url);
     }
 
@@ -83,25 +84,29 @@ public class TestCore extends TestCase {
         ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);", webElement);
     }
 
-    public void clickWithWait(long timeToWait, String xpath) {
+    public void clickWithWait(long timeToWait, By by) {
         getReadyState();
         WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
-        logger.info("Попытка поиска элемента и проведения клика по пути: " + xpath);
-        wait.withMessage("WebElement can't be found by: " + xpath);
+        logger.info("Попытка поиска элемента и проведения клика по пути: " + by);
+        wait.withMessage("WebElement can't be found by: " + by);
         ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);",
-                wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath))));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+                wait.until(ExpectedConditions.presenceOfElementLocated(by)));
+        wait.until(ExpectedConditions.visibilityOfElementLocated(by));
         int maxWaitForAvoidStaleElementException = (int) timeToWait;
         for (int i = 0; i < maxWaitForAvoidStaleElementException; i++) {
             try {
-                wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath))).click();
+                wait.until(ExpectedConditions.visibilityOfElementLocated(by)).click();
                 return;
             } catch (StaleElementReferenceException e) {
-                wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
-                wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+                wait.until(ExpectedConditions.presenceOfElementLocated(by));
+                wait.until(ExpectedConditions.visibilityOfElementLocated(by));
                 waitStatic(1000);
             }
         }
+    }
+
+    public void clickWithWait(By by) {
+        clickWithWait(10L, by);
     }
 
     public WebElement findElement(String xpath, long timeToWait) {
@@ -120,10 +125,6 @@ public class TestCore extends TestCase {
             }
         }
         return null;
-    }
-
-    public void clickWithWait(String xpath) {
-        clickWithWait(10L, xpath);
     }
 
     public List<WebElement> findAllWebElements(long timeToWait, String xpath) {
@@ -157,17 +158,17 @@ public class TestCore extends TestCase {
             return true;
         } catch (ElementNotVisibleException e) {
             return false;
-        }
-        catch (TimeoutException e){
+        } catch (TimeoutException e) {
             return false;
         }
     }
 
     public void closeAlertIfAppeared() {
         getReadyState();
+
         try {
             clickWithWait(1L,
-                    "//button[contains(@class, 'lg-cc__button_type_action') and (text()='Принять')]");
+                    By.xpath("//button[contains(@class, 'lg-cc__button_type_action') and (text()='Принять')]"));
         } catch (WebDriverException e) {
             logger.info("Окно принять условия не появилось.");
         }
