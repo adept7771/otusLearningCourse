@@ -11,9 +11,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class TestsCore extends TestCase {
+public class TestCore extends TestCase {
 
-    private Logger logger = LogManager.getLogger(TestsCore.class);
+    private Logger logger = LogManager.getLogger(TestCore.class);
     private WebDriver webDriver;
 
     @Override
@@ -53,6 +53,10 @@ public class TestsCore extends TestCase {
     }
 
     // ================================================================
+
+    public void get(String url){
+        webDriver.get(url);
+    }
 
     public void scrollToElement(long timeToWait, String xpath) {
         getReadyState();
