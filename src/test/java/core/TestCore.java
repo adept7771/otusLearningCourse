@@ -77,10 +77,30 @@ public class TestCore extends TestCase {
         }
     }
 
+    public void sendKeys(By by, String text){
+        sendKeys(10L, by, text);
+    }
+
+    public void sendKeys(long timeToWait, By by, String text){
+        getReadyState();
+        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        int maxWaitForAvoidStaleElementException = (int) timeToWait;
+        for (int i = 0; i < maxWaitForAvoidStaleElementException; i++) {
+            try {
+                wait.until(ExpectedConditions.visibilityOfElementLocated(by)).sendKeys(text);
+                return;
+            } catch (StaleElementReferenceException e) {
+                wait.until(ExpectedConditions.presenceOfElementLocated(by));
+                wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+                waitStatic(1000);
+            }
+        }
+    }
+
     public void scrollToElement(long timeToWait, WebElement webElement) {
         getReadyState();
         WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
-        //wait.until(ExpectedConditions.presenceOfElementLocated((By) webElement));
+        wait.until(ExpectedConditions.presenceOfElementLocated((By) webElement));
         ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);", webElement);
     }
 
