@@ -87,6 +87,7 @@ public class TestCore extends TestCase {
         int maxWaitForAvoidStaleElementException = (int) timeToWait;
         for (int i = 0; i < maxWaitForAvoidStaleElementException; i++) {
             try {
+                wait.until(ExpectedConditions.visibilityOfElementLocated(by)).clear();
                 wait.until(ExpectedConditions.visibilityOfElementLocated(by)).sendKeys(text);
                 return;
             } catch (StaleElementReferenceException e) {
