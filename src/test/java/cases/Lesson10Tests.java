@@ -4,6 +4,7 @@ import core.TestCore;
 import org.junit.Test;
 import pages.HeaderMenuPage;
 import pages.LoginPage;
+import pages.PersonalCabinetMenuPage;
 
 public class Lesson10Tests extends TestCore {
 
@@ -17,6 +18,7 @@ public class Lesson10Tests extends TestCore {
         sendKeys(loginPage.passwordInput, "NAd1R7IyOiFc");
         clickWithWait(loginPage.loginButton);
         clickWithWait(new HeaderMenuPage().myCoursesButton);
+        clickWithWait(new PersonalCabinetMenuPage().aboutMySelfButton);
 
         waitStatic(10000);
     }
