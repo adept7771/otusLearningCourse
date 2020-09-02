@@ -4,6 +4,7 @@ import junit.framework.TestCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -14,7 +15,7 @@ import java.util.Set;
 public class TestCore extends TestCase {
 
     private Logger logger = LogManager.getLogger(TestCore.class);
-    private WebDriver webDriver;
+    public WebDriver webDriver;
 
     @Override
     protected void setUp() {
@@ -78,17 +79,26 @@ public class TestCore extends TestCase {
     }
 
     public void sendKeys(By by, String text){
-        sendKeys(10L, by, text);
+        sendKeys(10L, by, text, null);
     }
 
-    public void sendKeys(long timeToWait, By by, String text){
+    public void sendKeys(By by, Keys keys){
+        sendKeys(10L, by, null, keys);
+    }
+
+    public void sendKeys(long timeToWait, By by, String text, Keys keys){
         getReadyState();
         WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
         int maxWaitForAvoidStaleElementException = (int) timeToWait;
         for (int i = 0; i < maxWaitForAvoidStaleElementException; i++) {
             try {
-                wait.until(ExpectedConditions.visibilityOfElementLocated(by)).clear();
-                wait.until(ExpectedConditions.visibilityOfElementLocated(by)).sendKeys(text);
+                if(keys == null){
+                    wait.until(ExpectedConditions.visibilityOfElementLocated(by)).clear();
+                    wait.until(ExpectedConditions.visibilityOfElementLocated(by)).sendKeys(text);
+                }
+                else {
+                    wait.until(ExpectedConditions.visibilityOfElementLocated(by)).sendKeys(keys);
+                }
                 return;
             } catch (StaleElementReferenceException e) {
                 wait.until(ExpectedConditions.presenceOfElementLocated(by));
@@ -129,6 +139,16 @@ public class TestCore extends TestCase {
     public void clickWithWait(By by) {
         clickWithWait(10L, by);
     }
+
+    public void moveToElement(By by) {
+        getReadyState();
+        Actions actions = new Actions(webDriver);
+        actions.moveToElement(new WebDriverWait(webDriver, 10L).until(
+                ExpectedConditions.presenceOfElementLocated(by)));
+        actions.perform();
+    }
+
+
 
     public WebElement findElement(String xpath, long timeToWait) {
         getReadyState();
