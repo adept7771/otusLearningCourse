@@ -20,16 +20,18 @@ public class PrivateDataPage {
     public By phoneInput = By.xpath("(//input[@name='phone'])[1]");
     public By addContactLink = By.xpath("//button[contains(@class, 'js-lk-cv-custom-select-add')]");
 
-    public By addContact2Dropdown = By.xpath("(//span[text()='Способ связи'])[1]");
-    public By addContact2Input = By.xpath("//input[@id='id_contact-2-value']");
-    public By addContact2Type = By.xpath("(//button[@title='Facebook'])[3]");
+    public By addContact1Dropdown = By.xpath("//input[@name='contact-0-service']/../div");
+    public By addContact1Input = By.xpath("//input[@id='id_contact-0-value']");
+    public By addContact1Type = By.cssSelector("[title='Facebook']");
 
-    public By addContact3Dropdown = By.xpath("(//span[text()='Способ связи'])[2]");
-    public By addContact3Input = By.xpath("//input[@id='id_contact-3-value']");
-    public By addContact3Type = By.xpath("(//button[@title='Skype'])[4]");
+    public By addContact2Dropdown = By.xpath("//input[@name='contact-1-service']/../div");
+    public By addContact2Input = By.xpath("//input[@id='id_contact-1-value']");
+    public By addContact2Type = By.cssSelector("[data-num='1'] [title='VK']");
 
     public By genderDropdownButton = By.xpath("//select[@name='gender']");
     public By genderMaleInDropdown = By.xpath("//option[@value='m']");
     public By companyInput = By.xpath("//input[@name='company']");
     public By jobTitleInput = By.xpath("//input[@name='work']");
+
+    public By saveDataButton = By.xpath("//button[@name='continue']");
 }

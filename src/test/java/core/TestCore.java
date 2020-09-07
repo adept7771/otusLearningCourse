@@ -29,9 +29,9 @@ public class TestCore extends TestCase {
             browserNameFromSystem = "chrome";
         }
         webDriver = WebDriverFactory.create(browserNameFromSystem);
-        //Point point = new Point(-1290, 100); // open browser on second screen
-        //webDriver.manage().window().setPosition(point);
-        //webDriver.manage().window().setSize(new Dimension(1280, 768));
+        Point point = new Point(-1380, 700); // open browser on second screen
+        webDriver.manage().window().setPosition(point);
+        webDriver.manage().window().setSize(new Dimension(1380, 900));
         logger.info("Драйвер поднят");
         try {
             super.setUp();
@@ -108,6 +108,17 @@ public class TestCore extends TestCase {
         }
     }
 
+    public void scrollToElement(long timeToWait, By by) {
+        getReadyState();
+        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        WebElement webElement = wait.until(ExpectedConditions.presenceOfElementLocated(by));
+        ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);", webElement);
+    }
+
+    public void scrollToElement(By by) {
+        scrollToElement(10L, by);
+    }
+
     public void scrollToElement(long timeToWait, WebElement webElement) {
         getReadyState();
         WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
@@ -117,38 +128,38 @@ public class TestCore extends TestCase {
 
     public void clickWithWait(long timeToWait, By by) {
         getReadyState();
-        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
         logger.info("Попытка поиска элемента и проведения клика по пути: " + by);
-        wait.withMessage("WebElement can't be found by: " + by);
-        ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);",
-                wait.until(ExpectedConditions.presenceOfElementLocated(by)));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(by));
-        int maxWaitForAvoidStaleElementException = (int) timeToWait;
-        for (int i = 0; i < maxWaitForAvoidStaleElementException; i++) {
-            try {
-                wait.until(ExpectedConditions.visibilityOfElementLocated(by)).click();
-                return;
-            } catch (StaleElementReferenceException e) {
-                wait.until(ExpectedConditions.presenceOfElementLocated(by));
-                wait.until(ExpectedConditions.visibilityOfElementLocated(by));
-                waitStatic(1000);
-            }
-        }
+        waitBy(timeToWait, by).click();
     }
 
     public void clickWithWait(By by) {
         clickWithWait(10L, by);
     }
 
-    public void moveToElement(By by) {
+    private WebElement waitBy(long timeToWait, By by){
+        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        wait.withMessage("WebElement can't be found by: " + by);
+        wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+        int maxWaitForAvoidStaleElementException = (int) timeToWait;
+        for (int i = 0; i < maxWaitForAvoidStaleElementException; i++) {
+            try {
+                return wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+            } catch (StaleElementReferenceException e) {
+                wait.until(ExpectedConditions.presenceOfElementLocated(by));
+                wait.until(ExpectedConditions.visibilityOfElementLocated(by));
+                waitStatic(1000);
+            }
+        }
+        return null;
+    }
+
+    public void moveCursorToElement(By by) {
         getReadyState();
         Actions actions = new Actions(webDriver);
         actions.moveToElement(new WebDriverWait(webDriver, 10L).until(
                 ExpectedConditions.presenceOfElementLocated(by)));
         actions.perform();
     }
-
-
 
     public WebElement findElement(String xpath, long timeToWait) {
         getReadyState();
@@ -186,6 +197,18 @@ public class TestCore extends TestCase {
         return null;
     }
 
+    public String getText(long timeToWait, By by){
+        getReadyState();
+        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        logger.info("Получение текста для: " + by);
+        try {
+            return waitBy(timeToWait, by).getText();
+        }
+        catch (NullPointerException e){
+            return null;
+        }
+    }
+
     public List<WebElement> findAllWebElements(String xpath) {
         return findAllWebElements(10L, xpath);
     }
@@ -196,6 +219,20 @@ public class TestCore extends TestCase {
         try {
             waitStatic((int) timeToWait);
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+            return true;
+        } catch (ElementNotVisibleException e) {
+            return false;
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
+
+    public boolean isElementVisible(By by, long timeToWait) {
+        getReadyState();
+        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        try {
+            waitStatic((int) timeToWait);
+            wait.until(ExpectedConditions.visibilityOfElementLocated(by));
             return true;
         } catch (ElementNotVisibleException e) {
             return false;
