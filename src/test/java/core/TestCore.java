@@ -56,8 +56,14 @@ public class TestCore extends TestCase {
     // ================================================================
 
     public void get(String url) {
-        logger.info("Открываю сайт: " + url);
-        webDriver.get(url);
+        try {
+            logger.info("Открываю сайт: " + url);
+            webDriver.get(url);
+        }
+        catch (NoSuchSessionException e){
+            setUp();
+            webDriver.get(url);
+        }
     }
 
     public void scrollToElement(long timeToWait, String xpath) {
@@ -75,6 +81,19 @@ public class TestCore extends TestCase {
             if (!window.equals(windowToExcept)) {
                 webDriver.switchTo().window(window);
             }
+        }
+    }
+
+    public String getText(By by){
+        WebElement webElement = waitBy(10, by);
+        if(webElement == null){
+            return null;
+        }
+        if(webElement.getText().equals("") || webElement.getText().equals("null")){
+            return webElement.getAttribute("value");
+        }
+        else {
+            return webElement.getText();
         }
     }
 

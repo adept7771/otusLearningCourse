@@ -10,10 +10,10 @@ public class PrivateDataPage {
     public By surnameLatinInput = By.xpath("//input[@name='lname_latin']");
     public By nameForBlogInput = By.xpath("//input[@name='blog_name']");
     public By birthDateInput = By.xpath("//input[@name='date_of_birth']");
-    public By countryDropdownButton = By.xpath("(//span[contains(text(), 'Не указано')])[1]");
-    public By countryFirstInDropdown = By.xpath("(//button[@data-value='1'])[1]");
-    public By cityDropdownButton = By.xpath("//input[@name='city']");
-    public By cityMoscowInDropdown = By.xpath("(//button[@data-value='317'])[1]");
+    public By countryDropdownButton = By.xpath("//input[@name='country']/../div");
+    public By countryFirstInDropdown = By.xpath("//button[@title='Россия']");
+    public By cityDropdownButton = By.xpath("//input[@name='city']/../div");
+    public By cityMoscowInDropdown = By.xpath("//button[@title='Москва']");
     public By englishLevelDropdownButton = By.xpath("//input[@name='english_level']");
     public By englishElementaryInDropdown = By.xpath("//button[@title='Элементарный уровень (Elementary)']");
     public By emailInput = By.xpath("(//input[@name='email'])[1]");
@@ -34,4 +34,5 @@ public class PrivateDataPage {
     public By jobTitleInput = By.xpath("//input[@name='work']");
 
     public By saveDataButton = By.xpath("//button[@name='continue']");
+    public By successTitle = By.xpath("//span[@class='success']");
 }
