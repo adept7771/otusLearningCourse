@@ -20,9 +20,9 @@ public class lesson6tests {
 
     @Test
     public void myFirstTest() {
-        webDriver.get("https://market.yandex.kz/");
+        webDriver.get("https://market.yandex.ru");
         closeAlertIfAppeared();
-        clickWithWait("//span[text()='Каталог товаров']");
+        clickWithWait("//span[contains(text(), 'Электроника')]");
         clickWithWait("//a[text()='Мобильные телефоны']");
         clickWithWait("//label//span[text()='Xiaomi']");
         clickWithWait("//label//span[text()='Apple']");
@@ -31,16 +31,14 @@ public class lesson6tests {
         WebElement xiaomiFirstProperPhoneWebElement = null, appleFirstProperPhoneWebElement = null;
         String xiaomiPhoneName = null, iphonePhoneName = null;
 
-        String catalogPagesXpath = "//a[contains(@class, 'button_theme_pseudo')]/span[not(contains(text(),'0')) and " +
-                "not(contains(text(),'Назад')) and not(contains(text(),'Вперед')) " +
-                "and not(contains(text(),'Показать'))]";
+        String catalogPagesXpath = "//a[contains(@aria-label, 'Страница')]";
         int catalogPagesAmount = findAllWebElements(catalogPagesXpath).size();
         if (catalogPagesAmount == 0) {
             catalogPagesAmount += 1;
             // в ситуации, когда пагинация отсутсвует
         }
 
-        for (int i = 1; i <= catalogPagesAmount - 1; i++) { // перебор каталога
+        for (int i = 1; i <= catalogPagesAmount - 1; i++) { // перебор каталога в поиске нужно модели
             if (xiaomiFirstProperPhoneWebElement != null && appleFirstProperPhoneWebElement != null) {
                 break;
             }
@@ -53,7 +51,7 @@ public class lesson6tests {
 
             WebDriverWait wait = new WebDriverWait(webDriver, 10L);
             if (i != catalogPagesAmount) { // ожидание загрузки каталога
-                String xpathForShowMoreButton = "//span[contains(text(), 'Показать еще')]";
+                String xpathForShowMoreButton = "//button[contains(text(), 'Показать ещё')]";
                 wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpathForShowMoreButton)));
                 wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpathForShowMoreButton)));
             } else {
@@ -159,9 +157,9 @@ public class lesson6tests {
             browserNameFromSystem = "chrome";
         }
         webDriver = WebDriverFactory.create(browserNameFromSystem);
-        Point point = new Point(-1290, 100); // open browser on second screen
+        Point point = new Point(-1380, 700); // open browser on second screen
         webDriver.manage().window().setPosition(point);
-        webDriver.manage().window().setSize(new Dimension(1280, 768));
+        webDriver.manage().window().setSize(new Dimension(1380, 760));
         logger.info("Драйвер поднят");
     }
 
