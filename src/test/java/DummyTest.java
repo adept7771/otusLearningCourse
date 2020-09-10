@@ -13,14 +13,19 @@ public class DummyTest {
 
     @Before
     public void setUp(){
-        String browserNameFromSystem = null;
+        String browserNameFromSystem, browserOptions = null;
         try {
             browserNameFromSystem = System.getProperty("browser");
         }
         catch (Exception e){
             browserNameFromSystem = "firefox";
         }
-        webDriver = WebDriverFactory.create(browserNameFromSystem);
+        try {
+            browserOptions = System.getProperty("options");
+        }
+        catch (Exception ignored){
+        }
+        webDriver = WebDriverFactory.create(browserNameFromSystem, browserOptions);
         logger.info("Драйвер поднят");
     }
 

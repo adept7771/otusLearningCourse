@@ -15,15 +15,9 @@ public class WebDriverFactory {
 
     private static Logger logger = LogManager.getLogger(WebDriverFactory.class);
 
-    public static RemoteWebDriver create(String browserOptionFromSystem) {
-        return create(recognizeBrowser(browserOptionFromSystem), null);
-    }
-
-    public static RemoteWebDriver create(Browser browser) {
-        return create(browser, null);
-    }
-
-    public static RemoteWebDriver create(Browser browser, WebDriver.Options options) {
+    public static RemoteWebDriver create(String browserString, String optionsString) {
+        WebDriver.Options options = convertOptionsStringToObject(optionsString);
+        Browser browser = recognizeBrowser(browserString);
         switch (browser) {
             case chrome: {
                 WebDriverManager.chromedriver().setup();
@@ -45,6 +39,10 @@ public class WebDriverFactory {
             }
         }
         logger.error("Фабрике не удалось сформировать драйвер");
+        return null;
+    }
+
+    private static WebDriver.Options convertOptionsStringToObject(String incomingString){
         return null;
     }
 
