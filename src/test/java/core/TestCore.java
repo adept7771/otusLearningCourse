@@ -31,7 +31,7 @@ public class TestCore extends TestCase {
         webDriver = WebDriverFactory.create(browserNameFromSystem);
 //        Point point = new Point(-1380, 700); // open browser on second screen
 //        webDriver.manage().window().setPosition(point);
-//        webDriver.manage().window().setSize(new Dimension(1380, 900));
+//        webDriver.manage().window().setSize(new Dimension(1380, 760));
         logger.info("Драйвер поднят");
         try {
             super.setUp();
