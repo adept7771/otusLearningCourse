@@ -60,7 +60,7 @@ public class lesson6tests {
                 wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpathForBackButton)));
             }
 
-            String xpathForComparablePhones = "//a[contains(text(), 'предложения')]/parent::div/parent::div/parent::article//h3[@data-zone-name='title']";
+            String xpathForComparablePhones = "//a[contains(text(), 'предложени')]/parent::div/parent::div/parent::article//h3[@data-zone-name='title']";
             // такой страшный и длинный икспас нужен только по причине
             // того, что добавить к сравнению мы можем только те товары, предложений которых больше чем 1. То есть надо
             // искать путь к строчке предложений, а потом подниматься наверх до тайтла. В задании это не предусмотрено.
@@ -81,7 +81,9 @@ public class lesson6tests {
                                 (addIndexToXpath(xpathForComparablePhones, a), 10L);
 
                         String catalogWindow = webDriver.getWindowHandle();
-                        clickWithWait(addIndexToXpath(xpathForComparablePhones, a));
+                        String modifiedXpathForComparablePhones = addIndexToXpath(xpathForComparablePhones, a);
+                        // формируем xpath для модели, подходящей для перехода на ее страничку
+                        clickWithWait(modifiedXpathForComparablePhones);
                         switchToNewWindowExceptMentioned(catalogWindow);
 
                         findElement("//div[@data-zone-name='image']//img", 10L);
@@ -100,10 +102,11 @@ public class lesson6tests {
                     }
                 }
             }
-            if (appleFirstProperPhoneWebElement == null) {
+            if (appleFirstProperPhoneWebElement == null) { // для Apple
                 for (int a = 1; a <= comparablePhonesAmount; a++) {
 
-                    String titleOfPhone = findElement(addIndexToXpath(xpathForComparablePhones, a), 10L).getText();
+                    String comparablePhoneXpath = addIndexToXpath(xpathForComparablePhones, a);
+                    String titleOfPhone = findElement(comparablePhoneXpath, 10L).getText();
 
                     if (appleFirstProperPhoneWebElement == null && titleOfPhone.contains("iPhone")) {
                         appleFirstProperPhoneWebElement = findElement
@@ -157,9 +160,9 @@ public class lesson6tests {
             browserNameFromSystem = "chrome";
         }
         webDriver = WebDriverFactory.create(browserNameFromSystem);
-        Point point = new Point(-1380, 700); // open browser on second screen
+        Point point = new Point(-1380, 650); // open browser on second screen
         webDriver.manage().window().setPosition(point);
-        webDriver.manage().window().setSize(new Dimension(1380, 760));
+        webDriver.manage().window().setSize(new Dimension(1390, 810));
         logger.info("Драйвер поднят");
     }
 
@@ -184,7 +187,6 @@ public class lesson6tests {
     public void scrollToElement(long timeToWait, WebElement webElement) {
         getReadyState();
         WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
-        //wait.until(ExpectedConditions.presenceOfElementLocated((By) webElement));
         ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);", webElement);
     }
 
