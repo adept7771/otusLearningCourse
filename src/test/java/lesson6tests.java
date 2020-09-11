@@ -43,10 +43,8 @@ public class lesson6tests {
                 break;
             }
             if (i != 1) { // catalog pages navigation
-                String xpathForNavigationButtons = "(//a[contains(@class, 'button_side_left')])[" + (i + 2) + "]";
+                String xpathForNavigationButtons = addIndexToXpath("//a[contains(@aria-label, 'Страница')]", i);
                 clickWithWait(xpathForNavigationButtons);
-                // такая странная структура нужна из за обсфускации кода кнопок навигации. Предыдущие локаторы кнопок
-                // перехода не работают, так как другие элементы перехватывают их клик. Приходится городить такой забор.
             }
 
             WebDriverWait wait = new WebDriverWait(webDriver, 10L);
@@ -60,39 +58,43 @@ public class lesson6tests {
                 wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpathForBackButton)));
             }
 
-            String xpathForComparablePhones = "//a[contains(text(), 'предложени')]/parent::div/parent::div/parent::article//h3[@data-zone-name='title']";
+            String xpathH3ComparablePhones = "//a[contains(text(), 'предложени')]/parent::div/parent::div/parent::article//h3[@data-zone-name='title']";
             // такой страшный и длинный икспас нужен только по причине
             // того, что добавить к сравнению мы можем только те товары, предложений которых больше чем 1. То есть надо
             // искать путь к строчке предложений, а потом подниматься наверх до тайтла. В задании это не предусмотрено.
 
-            int comparablePhonesAmount = findAllWebElements(xpathForComparablePhones).size();
+            int comparablePhonesAmount = findAllWebElements(xpathH3ComparablePhones).size();
             Assert.assertTrue("В каталоге отсутсвуют модели, доступные для сравнения",
                     comparablePhonesAmount > 0);
 
             // перебор всех телефонов доступных к сравнению на текущей страничке каталога
             // для Xiaomi:
             if (xiaomiFirstProperPhoneWebElement == null) {
-                for (int a = 1; a <= comparablePhonesAmount; a++) {
+                for (int a = 1; a < comparablePhonesAmount; a++) {
 
-                    String titleOfPhone = findElement(addIndexToXpath(xpathForComparablePhones, a), 10L).getText();
+                    String titleOfPhone = findElement(addIndexToXpath(xpathH3ComparablePhones, a), 10L)
+                            .getText();
 
                     if (xiaomiFirstProperPhoneWebElement == null && titleOfPhone.contains("Redmi")) {
                         xiaomiFirstProperPhoneWebElement = findElement
-                                (addIndexToXpath(xpathForComparablePhones, a), 10L);
+                                (addIndexToXpath(xpathH3ComparablePhones, a), 10L);
 
                         String catalogWindow = webDriver.getWindowHandle();
-                        String modifiedXpathForComparablePhones = addIndexToXpath(xpathForComparablePhones, a);
+                        String modifiedXpathForComparablePhones = addIndexToXpath(xpathH3ComparablePhones, a);
                         // формируем xpath для модели, подходящей для перехода на ее страничку
                         clickWithWait(modifiedXpathForComparablePhones);
                         switchToNewWindowExceptMentioned(catalogWindow);
 
-                        findElement("//div[@data-zone-name='image']//img", 10L);
+                        findElement("//div[@data-zone-name='image']//img", 15L);
                         String phoneNameOnPhonePage =
-                                findElement("//div[@data-apiary-widget-id='/content/productCardTitle']//h1", 10L).getText();
+                                findElement("//div[@data-apiary-widget-id='/content/productCardTitle']//h1",
+                                        10L).getText();
                         xiaomiPhoneName = phoneNameOnPhonePage;
-                        clickWithWait("//div[@data-apiary-widget-id='/content/productCardTitle']//div[contains(@aria-label, 'сравнению')]/div");
+                        clickWithWait("//div[@data-apiary-widget-id='/content/productCardTitle']" +
+                                "//div[contains(@aria-label, 'сравнению')]/div");
 
-                        String fullNameInCompareXpath = "//div[contains(text(), '" + phoneNameOnPhonePage + " добавлен к сравнению')]";
+                        String fullNameInCompareXpath = "//div[contains(text(), '" + phoneNameOnPhonePage +
+                                " добавлен к сравнению')]";
                         Assert.assertNotNull("Сообщение добавить к сравнению не появилось или содержит ошибку",
                                 findElement(fullNameInCompareXpath, 10L));
                         webDriver.close();
@@ -103,26 +105,49 @@ public class lesson6tests {
                 }
             }
             if (appleFirstProperPhoneWebElement == null) { // для Apple
-                for (int a = 1; a <= comparablePhonesAmount; a++) {
-
-                    String comparablePhoneXpath = addIndexToXpath(xpathForComparablePhones, a);
-                    String titleOfPhone = findElement(comparablePhoneXpath, 10L).getText();
+                for (int a = 1; a < comparablePhonesAmount; a++) {
+                    String titleOfPhone = "";
+                    try {
+                        titleOfPhone = findElement(addIndexToXpath(xpathH3ComparablePhones, a), 10L)
+                                .getText();
+                    }
+                    catch (StaleElementReferenceException e){
+                        titleOfPhone = findElement(addIndexToXpath(xpathH3ComparablePhones, a), 10L)
+                                .getText();
+                    }
 
                     if (appleFirstProperPhoneWebElement == null && titleOfPhone.contains("iPhone")) {
                         appleFirstProperPhoneWebElement = findElement
-                                (addIndexToXpath(xpathForComparablePhones, a), 10L);
+                                (addIndexToXpath(xpathH3ComparablePhones, a), 10L);
 
                         String catalogWindow = webDriver.getWindowHandle();
-                        clickWithWait(addIndexToXpath(xpathForComparablePhones, a));
+                        String xpathImgComparablePhones = (addIndexToXpath("//a[contains(@href, 'product--smartfon') and @data-zone-name='picture']",
+                                a));
+                        clickWithWait(xpathImgComparablePhones);
                         switchToNewWindowExceptMentioned(catalogWindow);
 
-                        findElement("//div[@data-zone-name='image']//img", 10L);
-                        String phoneNameOnPhonePage =
-                                findElement("//div[@data-apiary-widget-id='/content/productCardTitle']//h1", 10L).getText();
-                        iphonePhoneName = phoneNameOnPhonePage;
-                        clickWithWait("//div[@data-apiary-widget-id='/content/productCardTitle']//div[contains(@aria-label, 'сравнению')]/div");
+                        try {
+                            System.out.println(webDriver.getCurrentUrl());
+                            findElement("//div[@data-zone-name='image']//img", 5L);
+                        }
+                        catch (TimeoutException e){
+                            clickWithWait(xpathImgComparablePhones);
+                            switchToNewWindowExceptMentioned(catalogWindow);
+                            System.out.println(webDriver.getCurrentUrl());
+                            findElement("//div[@data-zone-name='image']//img", 5L);
+                        }
+                        // часто именно на айфоне не происходит прокликивания перехода. Хотя селениум рапортует,
+                        // что клик произведен :(
 
-                        String fullNameInCompareXpath = "//div[contains(text(), '" + phoneNameOnPhonePage + " добавлен к сравнению')]";
+                        String phoneNameOnPhonePage =
+                                findElement("//div[@data-apiary-widget-id='/content/productCardTitle']//h1",
+                                        10L).getText();
+                        iphonePhoneName = phoneNameOnPhonePage;
+                        clickWithWait("//div[@data-apiary-widget-id='/content/productCardTitle']" +
+                                "//div[contains(@aria-label, 'сравнению')]/div");
+
+                        String fullNameInCompareXpath = "//div[contains(text(), '" + phoneNameOnPhonePage +
+                                " добавлен к сравнению')]";
                         Assert.assertNotNull("Сообщение добавить к сравнению не появилось или содержит ошибку",
                                 findElement(fullNameInCompareXpath, 10L));
                         webDriver.close();
