@@ -1,8 +1,9 @@
 package pages;
 
+import core.TestsCore;
 import org.openqa.selenium.By;
 
-public class PrivateDataPage {
+public class PrivateDataPage extends TestsCore {
 
     public By nameInput = By.xpath("//input[@name='fname']");
     public By nameLatinInput = By.xpath("//input[@name='fname_latin']");

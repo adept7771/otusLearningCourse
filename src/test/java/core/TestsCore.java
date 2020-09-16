@@ -1,13 +1,7 @@
 package core;
 
-import io.cucumber.java.After;
-import io.cucumber.java.Before;
-import io.cucumber.junit.Cucumber;
-import io.cucumber.junit.CucumberOptions;
-import junit.framework.TestCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.runner.RunWith;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -17,98 +11,36 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-@RunWith(Cucumber.class)
-@CucumberOptions(
-        plugin = {"pretty",
-                "json:target/cucumber-reports/CucumberTests.json",
-                "junit:target/cucumber-reports/CucumberTests.xml",
-                "html:target/cucumber-reports/index.html"},
-        glue = {"com.cucumber.steps"},
-        features = "src/test/resources/features",
-        monochrome = true)
+import static core.DriverManager.*;
 
-public class TestCore extends TestCase {
+public abstract class TestsCore {
 
-    private static Logger logger = LogManager.getLogger(TestCore.class);
-    private static WebDriver webDriver;
-
-    protected void setUp() {
-        String browserNameFromSystem = null;
-        try {
-            browserNameFromSystem = System.getProperty("browser");
-            if (browserNameFromSystem == null) {
-                browserNameFromSystem = "chrome";
-            }
-        } catch (Exception e) {
-            browserNameFromSystem = "chrome";
-        }
-        webDriver = WebDriverFactory.create(browserNameFromSystem);
-//        Point point = new Point(-1380, 700); // open browser on second screen
-//        webDriver.manage().window().setPosition(point);
-//        webDriver.manage().window().setSize(new Dimension(1390, 810));
-        logger.info("Драйвер поднят");
-        try {
-            super.setUp();
-        } catch (Exception e) {
-            logger.error(e);
-        }
-    }
-
-    protected void tearDown() {
-        if (webDriver != null) {
-            logger.info("Драйвер выключен");
-            webDriver.quit();
-        }
-        try {
-            super.tearDown();
-        } catch (Exception e) {
-            logger.error(e);
-        }
-    }
-
-    public WebDriver getWebDriver() {
-        if (webDriver == null) {
-            setUp();
-        }
-        return webDriver;
-    }
-
-    @Before()
-    public void setupDriver() {
-        setUp();
-    }
-
-    @After()
-    public void quitDriver() {
-        tearDown();
-    }
-
-    // ================================================================
+    private static Logger logger = LogManager.getLogger(TestsCore.class);
 
     public void get(String url) {
         try {
             logger.info("Открываю сайт: " + url);
-            webDriver.get(url);
+            getWebDriver().get(url);
         } catch (NoSuchSessionException e) {
-            setUp();
-            webDriver.get(url);
+            setupDriver();
+            getWebDriver().get(url);
         }
     }
 
     public void scrollToElement(long timeToWait, String xpath) {
         getReadyState();
-        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        WebDriverWait wait = new WebDriverWait(getWebDriver(), timeToWait);
         WebElement webElement = wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xpath)));
-        ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);", webElement);
+        ((JavascriptExecutor) getWebDriver()).executeScript("arguments[0].scrollIntoView(true);", webElement);
     }
 
     public void switchToNewWindowExceptMentioned(String windowToExcept) {
-        Set windowHandles = webDriver.getWindowHandles();
+        Set windowHandles = getWebDriver().getWindowHandles();
         Iterator<String> iterator = windowHandles.iterator();
         while (iterator.hasNext()) {
             String window = iterator.next();
             if (!window.equals(windowToExcept)) {
-                webDriver.switchTo().window(window);
+                getWebDriver().switchTo().window(window);
             }
         }
     }
@@ -135,7 +67,7 @@ public class TestCore extends TestCase {
 
     public void sendKeys(long timeToWait, By by, String text, Keys keys) {
         getReadyState();
-        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        WebDriverWait wait = new WebDriverWait(getWebDriver(), timeToWait);
         int maxWaitForAvoidStaleElementException = (int) timeToWait;
         for (int i = 0; i < maxWaitForAvoidStaleElementException; i++) {
             try {
@@ -156,9 +88,9 @@ public class TestCore extends TestCase {
 
     public void scrollToElement(long timeToWait, By by) {
         getReadyState();
-        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        WebDriverWait wait = new WebDriverWait(getWebDriver(), timeToWait);
         WebElement webElement = wait.until(ExpectedConditions.presenceOfElementLocated(by));
-        ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);", webElement);
+        ((JavascriptExecutor) getWebDriver()).executeScript("arguments[0].scrollIntoView(true);", webElement);
     }
 
     public void scrollToElement(By by) {
@@ -167,9 +99,9 @@ public class TestCore extends TestCase {
 
     public void scrollToElement(long timeToWait, WebElement webElement) {
         getReadyState();
-        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        WebDriverWait wait = new WebDriverWait(getWebDriver(), timeToWait);
         wait.until(ExpectedConditions.presenceOfElementLocated((By) webElement));
-        ((JavascriptExecutor) webDriver).executeScript("arguments[0].scrollIntoView(true);", webElement);
+        ((JavascriptExecutor) getWebDriver()).executeScript("arguments[0].scrollIntoView(true);", webElement);
     }
 
     public void clickWithWait(long timeToWait, By by) {
@@ -183,7 +115,7 @@ public class TestCore extends TestCase {
     }
 
     private WebElement waitBy(long timeToWait, By by) {
-        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        WebDriverWait wait = new WebDriverWait(getWebDriver(), timeToWait);
         wait.withMessage("WebElement can't be found by: " + by);
         wait.until(ExpectedConditions.visibilityOfElementLocated(by));
         int maxWaitForAvoidStaleElementException = (int) timeToWait;
@@ -201,8 +133,8 @@ public class TestCore extends TestCase {
 
     public void moveCursorToElement(By by) {
         getReadyState();
-        Actions actions = new Actions(webDriver);
-        actions.moveToElement(new WebDriverWait(webDriver, 10L).until(
+        Actions actions = new Actions(getWebDriver());
+        actions.moveToElement(new WebDriverWait(getWebDriver(), 10L).until(
                 ExpectedConditions.presenceOfElementLocated(by)));
         actions.perform();
     }
@@ -210,13 +142,13 @@ public class TestCore extends TestCase {
     public WebElement findElement(String xpath, long timeToWait) {
         getReadyState();
         logger.info("Ждем элемент по xpath: " + xpath);
-        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        WebDriverWait wait = new WebDriverWait(getWebDriver(), timeToWait);
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(xpath)));
         wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
         int maxWaitForAvoidStaleElementException = (int) timeToWait;
         for (int i = 0; i < maxWaitForAvoidStaleElementException; i++) {
             try {
-                return webDriver.findElement(By.xpath(xpath));
+                return getWebDriver().findElement(By.xpath(xpath));
             } catch (StaleElementReferenceException e) {
                 waitStatic(1000);
                 continue;
@@ -227,14 +159,14 @@ public class TestCore extends TestCase {
 
     public List<WebElement> findAllWebElements(long timeToWait, String xpath) {
         getReadyState();
-        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        WebDriverWait wait = new WebDriverWait(getWebDriver(), timeToWait);
         logger.info("Поиск всех элементов по пути: " + xpath);
         int maxWaitForAvoidStaleElementException = (int) timeToWait;
         for (int i = 0; i < maxWaitForAvoidStaleElementException; i++) {
             try {
                 wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(By.xpath(xpath)));
                 wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath(xpath)));
-                return webDriver.findElements(By.xpath(xpath));
+                return getWebDriver().findElements(By.xpath(xpath));
             } catch (StaleElementReferenceException e) {
                 waitStatic(1000);
                 continue;
@@ -245,7 +177,7 @@ public class TestCore extends TestCase {
 
     public String getText(long timeToWait, By by) {
         getReadyState();
-        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        WebDriverWait wait = new WebDriverWait(getWebDriver(), timeToWait);
         logger.info("Получение текста для: " + by);
         try {
             return waitBy(timeToWait, by).getText();
@@ -260,7 +192,7 @@ public class TestCore extends TestCase {
 
     public boolean isElementVisible(String xpath, long timeToWait) {
         getReadyState();
-        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        WebDriverWait wait = new WebDriverWait(getWebDriver(), timeToWait);
         try {
             waitStatic((int) timeToWait);
             wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
@@ -274,7 +206,7 @@ public class TestCore extends TestCase {
 
     public boolean isElementVisible(By by, long timeToWait) {
         getReadyState();
-        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        WebDriverWait wait = new WebDriverWait(getWebDriver(), timeToWait);
         try {
             waitStatic((int) timeToWait);
             wait.until(ExpectedConditions.visibilityOfElementLocated(by));
@@ -288,7 +220,7 @@ public class TestCore extends TestCase {
 
     public boolean isElementExists(By by, long timeToWait) {
         getReadyState();
-        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        WebDriverWait wait = new WebDriverWait(getWebDriver(), timeToWait);
         try {
             waitStatic((int) timeToWait);
             wait.until(ExpectedConditions.presenceOfElementLocated(by));
@@ -328,7 +260,7 @@ public class TestCore extends TestCase {
     }
 
     public void getReadyState() {
-        WebDriverWait wait = new WebDriverWait(webDriver, 30);
+        WebDriverWait wait = new WebDriverWait(getWebDriver(), 30);
         wait.until(ExpectedConditions.jsReturnsValue("return document.readyState==\"complete\";"));
     }
 

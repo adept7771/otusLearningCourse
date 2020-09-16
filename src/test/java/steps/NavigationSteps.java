@@ -1,13 +1,13 @@
 package steps;
 
-import core.TestCore;
 import io.cucumber.java.en.Given;
+import core.TestsCore;
 
-public class NavigationSteps extends TestCore {
+public class NavigationSteps extends TestsCore {
 
     @Given("I navigate to page {string}")
     public void navigateToMainPage(String url) {
-        getWebDriver().navigate().to(url);
+        get(url);
     }
 
 }

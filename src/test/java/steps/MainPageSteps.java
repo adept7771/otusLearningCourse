@@ -1,17 +1,17 @@
 package steps;
 
-import core.TestCore;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
-import org.openqa.selenium.By;
+import core.TestsCore;
 import pages.MainPage;
 
-public class MainPageSteps extends TestCore {
+public class MainPageSteps extends TestsCore {
 
     @When("I see statistics blocks")
     public void checkStatisticsBlockExists() {
-        Assert.assertTrue(isElementExists(new MainPage().statisticsBlock, 10L));
+        MainPage mainPage = new MainPage();
+        Assert.assertTrue(isElementExists(mainPage.statisticsBlock, 10L));
     }
 
     @Then("I should values greater then {string} studentStatistic {string} groupStatistic {string} teacherStatistic in statistic blocks")

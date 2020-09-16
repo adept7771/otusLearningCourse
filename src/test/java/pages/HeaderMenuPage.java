@@ -1,8 +1,9 @@
 package pages;
 
+import core.TestsCore;
 import org.openqa.selenium.By;
 
-public class HeaderMenuPage {
+public class HeaderMenuPage extends TestsCore {
 
     public By loginButton = By.xpath("//button[@data-modal-id='new-log-reg']");
 
