@@ -8,4 +8,4 @@ Feature: Validate Otus statistic
     Then I should values greater then '<studentsAmount>' studentStatistic '<groupsAmount>' groupStatistic '<teachersAmount>' teacherStatistic in statistic blocks
     Examples:
       | studentsAmount | groupsAmount | teachersAmount |
-      | 10             | 6            | 10             |
+      | 150            | 100          | 50             |
