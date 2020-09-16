@@ -1,6 +1,6 @@
 #language:en
 
-Feature: Validate Otus statistic
+Feature: Validate Otus personal cabinet functions
 
   Scenario Outline: I can change my personal data in personal cabinet
     Given I navigate to page 'https://otus.ru/'
