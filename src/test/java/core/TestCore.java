@@ -1,8 +1,13 @@
 package core;
 
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
 import junit.framework.TestCase;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.junit.runner.RunWith;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -12,12 +17,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+@RunWith(Cucumber.class)
+@CucumberOptions(
+        plugin = {"pretty",
+                "json:target/cucumber-reports/CucumberTests.json",
+                "junit:target/cucumber-reports/CucumberTests.xml",
+                "html:target/cucumber-reports/index.html"},
+        glue = {"com.cucumber.steps"},
+        features = "src/test/resources/features",
+        monochrome = true)
+
 public class TestCore extends TestCase {
 
-    private Logger logger = LogManager.getLogger(TestCore.class);
-    public WebDriver webDriver;
+    private static Logger logger = LogManager.getLogger(TestCore.class);
+    private static WebDriver webDriver;
 
-    @Override
     protected void setUp() {
         String browserNameFromSystem = null;
         try {
@@ -40,7 +54,6 @@ public class TestCore extends TestCase {
         }
     }
 
-    @Override
     protected void tearDown() {
         if (webDriver != null) {
             logger.info("Драйвер выключен");
@@ -53,14 +66,30 @@ public class TestCore extends TestCase {
         }
     }
 
+    public WebDriver getWebDriver() {
+        if (webDriver == null) {
+            setUp();
+        }
+        return webDriver;
+    }
+
+    @Before()
+    public void setupDriver() {
+        setUp();
+    }
+
+    @After()
+    public void quitDriver() {
+        tearDown();
+    }
+
     // ================================================================
 
     public void get(String url) {
         try {
             logger.info("Открываю сайт: " + url);
             webDriver.get(url);
-        }
-        catch (NoSuchSessionException e){
+        } catch (NoSuchSessionException e) {
             setUp();
             webDriver.get(url);
         }
@@ -84,38 +113,36 @@ public class TestCore extends TestCase {
         }
     }
 
-    public String getText(By by){
+    public String getText(By by) {
         WebElement webElement = waitBy(10, by);
-        if(webElement == null){
+        if (webElement == null) {
             return null;
         }
-        if(webElement.getText().equals("") || webElement.getText().equals("null")){
+        if (webElement.getText().equals("") || webElement.getText().equals("null")) {
             return webElement.getAttribute("value");
-        }
-        else {
+        } else {
             return webElement.getText();
         }
     }
 
-    public void sendKeys(By by, String text){
+    public void sendKeys(By by, String text) {
         sendKeys(10L, by, text, null);
     }
 
-    public void sendKeys(By by, Keys keys){
+    public void sendKeys(By by, Keys keys) {
         sendKeys(10L, by, null, keys);
     }
 
-    public void sendKeys(long timeToWait, By by, String text, Keys keys){
+    public void sendKeys(long timeToWait, By by, String text, Keys keys) {
         getReadyState();
         WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
         int maxWaitForAvoidStaleElementException = (int) timeToWait;
         for (int i = 0; i < maxWaitForAvoidStaleElementException; i++) {
             try {
-                if(keys == null){
+                if (keys == null) {
                     wait.until(ExpectedConditions.visibilityOfElementLocated(by)).clear();
                     wait.until(ExpectedConditions.visibilityOfElementLocated(by)).sendKeys(text);
-                }
-                else {
+                } else {
                     wait.until(ExpectedConditions.visibilityOfElementLocated(by)).sendKeys(keys);
                 }
                 return;
@@ -155,7 +182,7 @@ public class TestCore extends TestCase {
         clickWithWait(10L, by);
     }
 
-    private WebElement waitBy(long timeToWait, By by){
+    private WebElement waitBy(long timeToWait, By by) {
         WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
         wait.withMessage("WebElement can't be found by: " + by);
         wait.until(ExpectedConditions.visibilityOfElementLocated(by));
@@ -216,14 +243,13 @@ public class TestCore extends TestCase {
         return null;
     }
 
-    public String getText(long timeToWait, By by){
+    public String getText(long timeToWait, By by) {
         getReadyState();
         WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
         logger.info("Получение текста для: " + by);
         try {
             return waitBy(timeToWait, by).getText();
-        }
-        catch (NullPointerException e){
+        } catch (NullPointerException e) {
             return null;
         }
     }
@@ -254,6 +280,20 @@ public class TestCore extends TestCase {
             wait.until(ExpectedConditions.visibilityOfElementLocated(by));
             return true;
         } catch (ElementNotVisibleException e) {
+            return false;
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
+
+    public boolean isElementExists(By by, long timeToWait) {
+        getReadyState();
+        WebDriverWait wait = new WebDriverWait(webDriver, timeToWait);
+        try {
+            waitStatic((int) timeToWait);
+            wait.until(ExpectedConditions.presenceOfElementLocated(by));
+            return true;
+        } catch (NoSuchElementException e) {
             return false;
         } catch (TimeoutException e) {
             return false;

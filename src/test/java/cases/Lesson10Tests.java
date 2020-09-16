@@ -90,7 +90,7 @@ public class Lesson10Tests extends TestCore {
         clickWithWait(privateDataPage.saveDataButton);
         clickWithWait(privateDataPage.successTitle);
 
-        webDriver.close();
+        getWebDriver().close();
         get("http://otus.ru");
 
         clickWithWait(new HeaderMenuPage().loginButton);
