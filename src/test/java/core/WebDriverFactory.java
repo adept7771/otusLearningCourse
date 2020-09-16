@@ -25,45 +25,28 @@ public class WebDriverFactory {
     }
 
     public static RemoteWebDriver create(Browser browser, WebDriver.Options options){
-        if(browser.equals(Browser.chrome)){
-            WebDriverManager.chromedriver().setup();
-            ChromeDriver chromeDriver = null;
-            if(options != null){
-                ChromeOptions chromeOptions = (ChromeOptions) options;
-                chromeDriver = new ChromeDriver(chromeOptions);
+        switch (browser) {
+            case chrome: {
+                WebDriverManager.chromedriver().setup();
+                logger.info("Драйвер Chrome формируется фабрикой");
+                if (options != null) return new ChromeDriver((ChromeOptions) options);
+                else return new ChromeDriver();
             }
-            else {
-                chromeDriver = new ChromeDriver();
+            case opera: {
+                WebDriverManager.operadriver().setup();
+                logger.info("Драйвер Opera формируется фабрикой");
+                if (options != null) return new OperaDriver((OperaOptions) options);
+                else return new OperaDriver();
             }
-            logger.info("Драйвер Chrome сформирован фабрикой");
-            return chromeDriver;
+            case firefox: {
+                WebDriverManager.firefoxdriver().setup();
+                logger.info("Драйвер Firefox формируется фабрикой");
+                if (options != null) return new FirefoxDriver((FirefoxOptions) options);
+                else return new FirefoxDriver();
+            }
         }
-        if(browser.equals(Browser.opera)){
-            WebDriverManager.operadriver().setup();
-            OperaDriver operaDriver = null;
-            if(options != null){
-                OperaOptions operaOptions = (OperaOptions) options;
-                operaDriver = new OperaDriver(operaOptions);
-            }
-            else {
-                operaDriver = new OperaDriver();
-            }
-            logger.info("Драйвер Opera сформирован фабрикой");
-            return operaDriver;
-        }
-        else {
-            WebDriverManager.firefoxdriver().setup();
-            FirefoxDriver firefoxDriver = null;
-            if(options != null){
-                FirefoxOptions firefoxOptions = (FirefoxOptions) options;
-                firefoxDriver = new FirefoxDriver(firefoxOptions);
-            }
-            else {
-                firefoxDriver = new FirefoxDriver();
-            }
-            logger.info("Драйвер Firefox сформирован фабрикой");
-            return firefoxDriver;
-        }
+        logger.error("Фабрике не удалось сформировать драйвер");
+        return null;
     }
 
     private static Browser recognizeBrowser(String incomingBrowserName){
