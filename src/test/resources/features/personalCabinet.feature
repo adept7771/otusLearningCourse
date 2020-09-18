@@ -49,3 +49,26 @@ Feature: Validate Otus personal cabinet functions
     Then I can navigate to about myself information
     Then I download avatar from personal cabinet
     Then I compare current avatar with uploaded one include file difference
+
+  Scenario: I can approve that course was payed
+    Given I navigate to page 'https://otus.ru/'
+    When I can login with correct login and password
+    When I can navigate to about myself information
+    Then I can navigate to payment page
+    Then I check current course was already payed
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

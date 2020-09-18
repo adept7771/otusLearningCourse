@@ -4,9 +4,8 @@ import io.cucumber.java.en.Given;
 import core.TestsCore;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
-import pages.HeaderMenuPage;
-import pages.LessonsPage;
-import pages.PersonalCabinetMenuPage;
+import org.junit.Assert;
+import pages.*;
 
 public class NavigationSteps extends TestsCore {
 
@@ -34,5 +33,29 @@ public class NavigationSteps extends TestsCore {
     @Then("I can choose java qa course")
     public void iCanChooseJavaQaCourse() {
         clickWithWait(new LessonsPage().javaCourseButton);
+    }
+
+    @Then("I can navigate to payment page")
+    public void iCanNavigateToPaymentPage() {
+        clickWithWait(new PersonalCabinetMenuPage().payButton);
+    }
+
+    @When("I can navigate to partnership page")
+    public void iCanNavigateToPartnershipPage() {
+        clickWithWait(new FooterMenuPage().beATeacherButton);
+    }
+
+    @When("I navigate to qa java course")
+    public void iNavigateToQaJavaCourse() {
+        MainPage mainPage = new MainPage();
+        clickWithWait(mainPage.testingCoursesLink);
+        //scrollToElement(mainPage.gameTestingCourseLink);
+        scrollToElement(mainPage.qaJavaCourseLink);
+        clickWithWait(mainPage.qaJavaCourseLink);
+    }
+
+    @Then("i should see the best teacher at course")
+    public void iShouldSeeTheBestTeacherAtCourse() {
+        Assert.assertTrue(isElementVisible(new MainPage().bestTeacherAtCourse, 10L));
     }
 }

@@ -10,3 +10,8 @@ Feature: Validate Otus statistic
       | studentsAmount | groupsAmount | teachersAmount |
       | 150            | 100          | 50             |
 
+  Scenario: Find best teacher at course of Java QA
+    Given I navigate to page 'https://otus.ru/'
+    When I navigate to qa java course
+    Then i should see the best teacher at course
+

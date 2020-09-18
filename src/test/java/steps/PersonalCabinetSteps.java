@@ -4,10 +4,7 @@ import core.TestsCore;
 import io.cucumber.java.en.Then;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
-import pages.HeaderMenuPage;
-import pages.LessonsPage;
-import pages.LoginPage;
-import pages.PrivateDataPage;
+import pages.*;
 import utils.Utils;
 
 import java.io.BufferedInputStream;
@@ -109,5 +106,10 @@ public class PersonalCabinetSteps extends TestsCore {
     @Then("I see error message in personal data page field validation")
     public void iSeeErrorMessageInPersonalDataPageFieldValidation() {
         Assert.assertTrue(isElementVisible(new PrivateDataPage().errorMessage, 10L));
+    }
+
+    @Then("I check current course was already payed")
+    public void iCheckCurrentCourseWasAlreadyPayed() {
+        Assert.assertTrue(isElementVisible(new PaymentPage().fullPaymentTitle, 5L));
     }
 }
