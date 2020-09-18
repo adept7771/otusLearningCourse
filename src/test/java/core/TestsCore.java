@@ -57,6 +57,35 @@ public abstract class TestsCore {
         }
     }
 
+    public String getAttribute(By by, String attribute) {
+        WebElement webElement = waitBy(10, by);
+        if (webElement == null) {
+            return null;
+        }
+        else {
+            return webElement.getAttribute(attribute);
+        }
+    }
+
+    public void sendKeysWOWaitVisibility(By by, String text) {
+        getReadyState();
+        WebDriverWait wait = new WebDriverWait(getWebDriver(), 10L);
+        int maxWaitForAvoidStaleElementException = (int) 10L;
+        for (int i = 0; i < maxWaitForAvoidStaleElementException; i++) {
+            try {
+                if (text == null) {
+                    wait.until(ExpectedConditions.presenceOfElementLocated(by)).sendKeys(text);
+                } else {
+                    wait.until(ExpectedConditions.presenceOfElementLocated(by)).sendKeys(text);
+                }
+                return;
+            } catch (StaleElementReferenceException e) {
+                wait.until(ExpectedConditions.presenceOfElementLocated(by));
+                waitStatic(1000);
+            }
+        }
+    }
+
     public void sendKeys(By by, String text) {
         sendKeys(10L, by, text, null);
     }

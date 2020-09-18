@@ -36,4 +36,10 @@ public class PrivateDataPage extends TestsCore {
 
     public By saveDataButton = By.xpath("//button[@name='continue']");
     public By successTitle = By.xpath("//span[@class='success']");
+    public By errorMessage = By.xpath("//p[@class='input-line__error']");
+
+    public By avatarInput = By.xpath("//input[@class='file-in-button js-avatar-file']");
+    public By avatarInputAccept = By.xpath("//button[@class='button button_blue js-choose-crop']");
+    public By avatarPicture = By.xpath("//div[@class='settings-photo']//div[contains(@style, 'url') " +
+            "and contains(@class,'ic-blog-default-avatar')]");
 }
