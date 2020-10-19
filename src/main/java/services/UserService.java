@@ -10,6 +10,7 @@ import static io.restassured.RestAssured.given;
 public class UserService {
     private static final String baseUrl = "https://petstore.swagger.io/v2";
     private static final String createUserUrl = "/user";
+    private static final String getUserUrl = "/user/";
 
     RequestSpecification spec;
 
@@ -47,5 +48,14 @@ public class UserService {
                 .when()
                 .log().all()
                 .post(createUserUrl);
+    }
+
+    public Response getUserByName(String userName) {
+        return given()
+                .spec(spec)
+                .with()
+                .when()
+                .log().all()
+                .get(getUserUrl + userName);
     }
 }

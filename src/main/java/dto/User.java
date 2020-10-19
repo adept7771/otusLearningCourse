@@ -10,12 +10,16 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @AllArgsConstructor
 @JsonSerialize
 public class User {
-    private String email;
-    private String firstName;
     private Long id;
+    private String username;
+    private String firstName;
     private String lastName;
+    private String email;
     private String password;
     private String phone;
     private Long userStatus;
-    private String username;
+
+    public User(){
+    }
+
 }
