@@ -12,27 +12,28 @@ public class DriverManager {
     private static WebDriver webDriver;
 
     public static void setupDriver() {
-        String browserNameFromSystem = null;
-        try {
-            browserNameFromSystem = System.getProperty("browser");
-            if (browserNameFromSystem == null) {
-                browserNameFromSystem = "chrome";
-            }
-        } catch (Exception e) {
-            browserNameFromSystem = "chrome";
-        }
-        webDriver = WebDriverFactory.create(browserNameFromSystem);
-        Point point = new Point(-1380, 700); // open browser on second screen
-        webDriver.manage().window().setPosition(point);
-        webDriver.manage().window().setSize(new Dimension(1390, 810));
-        logger.info("Драйвер поднят");
+//        String browserNameFromSystem = null;
+//
+//        try {
+//            browserNameFromSystem = System.getProperty("browser");
+//            if (browserNameFromSystem == null) {
+//                browserNameFromSystem = "chrome";
+//            }
+//        } catch (Exception e) {
+//            browserNameFromSystem = "chrome";
+//        }
+//        webDriver = WebDriverFactory.create(browserNameFromSystem);
+//        Point point = new Point(-1380, 700); // open browser on second screen
+//        webDriver.manage().window().setPosition(point);
+//        webDriver.manage().window().setSize(new Dimension(1390, 810));
+//        logger.info("Драйвер поднят");
     }
 
     public static void quitDriver() {
-        if (webDriver != null) {
-            logger.info("Драйвер выключен");
-            webDriver.quit();
-        }
+//        if (webDriver != null) {
+//            logger.info("Драйвер выключен");
+//            webDriver.quit();
+//        }
     }
 
     public static WebDriver getWebDriver() {
