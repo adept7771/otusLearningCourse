@@ -4,6 +4,8 @@ import core.TestsCore;
 import io.cucumber.java.en.Then;
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import pages.*;
 import utils.Utils;
 
@@ -15,6 +17,7 @@ import java.net.URL;
 
 public class PersonalCabinetSteps extends TestsCore {
 
+    @Execution(ExecutionMode.CONCURRENT)
     @Then("I can login with correct login and password")
     public void authorisationPositive() {
         LoginPage loginPage = new LoginPage();

@@ -4,8 +4,11 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
 import core.TestsCore;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import pages.MainPage;
 
+@Execution(ExecutionMode.CONCURRENT)
 public class MainPageSteps extends TestsCore {
 
     @When("I see statistics blocks")

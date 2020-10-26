@@ -4,8 +4,11 @@ import core.TestsCore;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import org.junit.Assert;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import pages.PartnershipPage;
 
+@Execution(ExecutionMode.CONCURRENT)
 public class PartnershipSteps extends TestsCore {
 
     @Given("I can open modal partnership windows")

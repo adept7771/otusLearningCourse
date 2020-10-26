@@ -5,8 +5,11 @@ import core.TestsCore;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.junit.Assert;
+import org.junit.jupiter.api.parallel.Execution;
+import org.junit.jupiter.api.parallel.ExecutionMode;
 import pages.*;
 
+@Execution(ExecutionMode.CONCURRENT)
 public class NavigationSteps extends TestsCore {
 
     @Given("I navigate to page {string}")
