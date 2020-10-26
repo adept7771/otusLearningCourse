@@ -22,9 +22,9 @@ public class DriverManager {
             browserNameFromSystem = "chrome";
         }
         webDriver = WebDriverFactory.create(browserNameFromSystem);
-        Point point = new Point(-1380, 700); // open browser on second screen
-        webDriver.manage().window().setPosition(point);
-        webDriver.manage().window().setSize(new Dimension(1390, 810));
+//        Point point = new Point(-1380, 700); // open browser on second screen
+//        webDriver.manage().window().setPosition(point);
+//        webDriver.manage().window().setSize(new Dimension(1390, 810));
         logger.info("Драйвер поднят");
     }
 
