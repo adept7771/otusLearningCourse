@@ -17,6 +17,7 @@ public class DriverManager {
 
     @lombok.SneakyThrows
     public static void setupDriver() {
+
 //        String browserNameFromSystem = null;
 //        try {
 //            browserNameFromSystem = System.getProperty("browser");
@@ -30,6 +31,7 @@ public class DriverManager {
 //        Point point = new Point(-1380, 700); // open browser on second screen
 //        webDriver.manage().window().setPosition(point);
 //        webDriver.manage().window().setSize(new Dimension(1390, 810));
+
         String slenoidURL = "http://localhost:4444/wd/hub";
         DesiredCapabilities caps = new DesiredCapabilities();
         caps.setBrowserName("chrome");
