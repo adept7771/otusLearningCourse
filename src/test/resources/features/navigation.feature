@@ -2,6 +2,7 @@
 
 Feature: Validate Otus statistic
 
+  @smoke
   Scenario Outline: As a user i can check statistics block on main page
     Given I navigate to page 'https://otus.ru/'
     When I see statistics blocks
@@ -10,6 +11,7 @@ Feature: Validate Otus statistic
       | studentsAmount | groupsAmount | teachersAmount |
       | 150            | 100          | 50             |
 
+  @smoke
   Scenario: Find best teacher at course of Java QA
     Given I navigate to page 'https://otus.ru/'
     When I navigate to qa java course
