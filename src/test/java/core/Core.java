@@ -12,9 +12,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class TestCore extends TestCase {
+public class Core extends TestCase {
 
-    private Logger logger = LogManager.getLogger(TestCore.class);
+    private Logger logger = LogManager.getLogger(Core.class);
     public WebDriver webDriver;
 
     @Override

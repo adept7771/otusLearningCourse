@@ -1,8 +1,8 @@
 package cases;
 
-import core.TestCore;
-import org.apache.logging.log4j.core.util.Assert;
-import org.junit.jupiter.api.Test;
+import core.Core;
+
+import org.junit.*;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.TimeoutException;
 import pages.HeaderMenuPage;
@@ -11,7 +11,7 @@ import pages.PersonalCabinetMenuPage;
 import pages.PrivateDataPage;
 import utils.Generators;
 
-public class Lesson10Tests extends TestCore {
+public class TestsLesson10 extends Core {
 
     @Test
     public void testFillPersonalContacts() {
@@ -100,7 +100,6 @@ public class Lesson10Tests extends TestCore {
         clickWithWait(loginPage.loginButton);
         clickWithWait(new HeaderMenuPage().myCoursesButton);
         clickWithWait(new PersonalCabinetMenuPage().aboutMySelfButton);
-
 
         Assert.assertEquals("Name is different then defined", name, getText(privateDataPage.nameInput));
         Assert.assertEquals("NameLatin is different then defined", nameLatin, getText(privateDataPage.nameLatinInput));
