@@ -30,10 +30,13 @@ public class WebDriverFactory {
             ChromeDriver chromeDriver = null;
             if(options != null){
                 ChromeOptions chromeOptions = (ChromeOptions) options;
+                chromeOptions.addArguments("--headless");
                 chromeDriver = new ChromeDriver(chromeOptions);
             }
             else {
-                chromeDriver = new ChromeDriver();
+                ChromeOptions chromeOptions = new ChromeOptions();
+                chromeOptions.addArguments("--headless");
+                chromeDriver = new ChromeDriver(chromeOptions);
             }
             logger.info("Драйвер Chrome сформирован фабрикой");
             return chromeDriver;
